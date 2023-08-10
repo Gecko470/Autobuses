@@ -1,0 +1,36 @@
+﻿@model IEnumerable<Autobuses.Clases.RolPaginaCLS>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.IIDROLPAGINA)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Rol)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Pagina)
+        </th>
+        <th>Acciones</th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.IIDROLPAGINA)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Rol)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Pagina)
+            </td>
+            <td>
+                <button class="glyphicon glyphicon-edit text-primary" data-toggle="modal" data-target="#exampleModal" onclick="editar(@item.IIDROLPAGINA)"></button>
+                <button class="glyphicon glyphicon-trash text-danger" data-toggle="modal" data-target="#deleteModal" onclick="eliminar(@item.IIDROLPAGINA)"></button>
+            </td>
+        </tr>
+    }
+
+</table>

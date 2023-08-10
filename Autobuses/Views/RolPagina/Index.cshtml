@@ -1,0 +1,156 @@
+﻿@model IEnumerable<Autobuses.Clases.RolPaginaCLS>
+
+@{
+    ViewBag.Title = "Rol Página";
+    List<SelectListItem> listaRoles = ViewBag.listaRoles;
+    List<SelectListItem> listaPaginas = ViewBag.listaPaginas;
+}
+
+<h2>Rol Página</h2>
+<hr />
+<div style="display: flex;justify-content: space-between;">
+    <div>
+        <button class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" onclick="agregar()">Nuevo</button>
+    </div>
+    <div>
+        @using (Ajax.BeginForm("Filtro", "RolPagina", new { }, new AjaxOptions()
+        {
+            HttpMethod = "POST",
+            UpdateTargetId = "divTablaRolPagina",
+            InsertionMode = InsertionMode.Replace
+
+        }, new { @id = "frmBusquedas" }))
+        {
+            <div class="form-inline">
+                @Html.Label("Rol: ")
+                @Html.DropDownList("idRol", listaRoles, new { @class = "form-control" })
+            </div>
+        }
+    </div>
+</div>
+
+<div id="divTablaRolPagina">
+    @Html.Partial("_TablaRolPagina", Model)
+</div>
+
+@using (Ajax.BeginForm("Delete", "RolPagina", new{ }, new AjaxOptions()
+{
+    HttpMethod = "POST",
+    OnSuccess = "Refresh2"
+
+}, new { @id = "frmDelete" }))
+{
+    @Html.Hidden("idEliminar")
+}
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title text-primary" id="exampleModalLabel">Rol Página</h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                @using (Ajax.BeginForm("Guardar", "RolPagina", new { }, new AjaxOptions()
+                {
+                    HttpMethod = "POST",
+                    OnSuccess = "Refresh",
+                    UpdateTargetId = "divErrores",
+                    InsertionMode = InsertionMode.Replace
+
+                }, new { @id = "frmCreate" }))
+                {
+                    @Html.Hidden("operacion")
+                    <div class="form-group">
+                        @Html.Label("Pagina")
+                        @Html.DropDownList("IIDPAGINA", listaPaginas, new { @class = "form-control" })
+                    </div>
+                    <div class="form-group">
+                        @Html.Label("Rol")
+                        @Html.DropDownList("IIDROL", listaRoles, new { @class = "form-control" })
+                    </div>
+                }
+                <div id="divErrores"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btnClose" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button class="btn btn-primary" onclick="enviar()">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title text-primary" id="deleteModalLabel">Roles</h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <span>Quires borrar el registro seleccionado?</span>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btnClose2" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="eliminarRegistro()">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById("idRol").onchange = () => {
+        $("#frmBusquedas").trigger("submit");
+    }
+    function agregar() {
+        limpiar();
+        document.getElementById("operacion").value = -1;
+    }
+
+    function editar(id) {
+        limpiar();
+        document.getElementById("operacion").value = id;
+
+        $.get("/RolPagina/Edit/?id=" + id, (data) => {
+            document.getElementById("IIDPAGINA").value = data.IIDPAGINA;
+            document.getElementById("IIDROL").value = data.IIDROL;
+        });
+    }
+
+    function limpiar() {
+        document.getElementById("divErrores").innerHTML = "";
+        document.getElementById("IIDPAGINA").value = "";
+        document.getElementById("IIDROL").value = "";
+    }
+
+    function Refresh(resp) {
+        if (resp == "0" || resp == "1") {
+            document.getElementById("btnClose").click();
+            $("#frmBusquedas").trigger("submit");
+        }
+    }
+
+    function enviar() {
+        $("#frmCreate").trigger("submit");
+    }
+
+    function eliminar(id) {
+        document.getElementById("idEliminar").value = id;
+    }
+
+    function eliminarRegistro() {
+        $("#frmDelete").trigger("submit");
+    }
+
+    function Refresh2(resp) {
+        if (resp == "1") {
+            document.getElementById("btnClose2").click();
+            $("#frmBusquedas").trigger("submit");
+        }
+    }
+</script>
+

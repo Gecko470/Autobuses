@@ -1,0 +1,144 @@
+﻿@model IEnumerable<Autobuses.Clases.EmpleadoCLS>
+
+@{
+    ViewBag.Title = "Empleados";
+
+    List<SelectListItem> tiposUsuarios = ViewBag.tiposUsuarios;
+    List<SelectListItem> tiposContratos = ViewBag.tiposContratos;
+    List<SelectListItem> listaSexos = ViewBag.listaSexos;
+}
+
+<h2>Empleados</h2>
+<hr />
+<div style="display: flex; justify-content: space-between;">
+    <div>
+        @Html.ActionLink("Nueva", "Create", "Empleado", new { }, new { @class = "btn btn-primary" })
+    </div>
+
+    <div>
+        @using (Html.BeginForm("Index", "Empleado", FormMethod.Get, new { @id = "frm" }))
+        {
+            <div class="form-inline">
+                @Html.Label("Tipo Usuario: ", new { @class = "me-4" })
+                @Html.DropDownList("idTU", tiposUsuarios, new { @class = "me-4 form-control" })
+            </div>
+
+        }
+    </div>
+</div>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.IIDEMPLEADO)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NOMBRE)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.APPATERNO)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.APMATERNO)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FECHACONTRATO)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SUELDO)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TipoUsuario)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TipoContrato)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Sexo)
+            </th>
+            <th colspan="2">Acciones</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IIDEMPLEADO)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NOMBRE)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.APPATERNO)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.APMATERNO)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FECHACONTRATO)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SUELDO)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TipoUsuario)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TipoContrato)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Sexo)
+                </td>
+                <td>
+                    @Html.ActionLink(" ", "Edit", "Empleado", new { id = item.IIDEMPLEADO }, new { @class = "glyphicon glyphicon-edit" })
+                </td>
+                <td><button class="glyphicon glyphicon-trash text-danger" data-toggle="modal" data-target="#exampleModal" onclick="agregar(@item.IIDEMPLEADO)"></button></td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@using (Html.BeginForm("Delete", "Empleado", FormMethod.Post, new { @id = "frm" }))
+{
+    @Html.Hidden("id")
+}
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title text-primary" id="exampleModalLabel">Clientes</h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <span>Quieres eliminar el registro?</span>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="enviar()">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    let idTU = document.getElementById("idTU");
+
+    idTU.onchange = function () {
+        document.getElementById("frm").submit();
+    }
+
+    function agregar(id) {
+        document.getElementById("id").value = id;
+    }
+
+    function enviar() {
+        let frm = document.getElementById("frm");
+        frm.submit();
+    }
+</script>

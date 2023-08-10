@@ -1,0 +1,103 @@
+﻿@using Autobuses.Clases
+@model IEnumerable<ClienteCLS>
+@{
+    ViewBag.Title = "Clientes";
+    List<SelectListItem> listaSexos = ViewBag.listaSexos;
+}
+
+<h2>Clientes</h2>
+<hr />
+<div style="display: flex; justify-content: space-between;">
+    <div>
+        @Html.ActionLink("Nueva", "Create", "Cliente", new { }, new { @class = "btn btn-primary" })
+    </div>
+
+    <div>
+        @using (Html.BeginForm("Index", "Cliente", FormMethod.Get, new { @id = "frm" }))
+        {
+            <div class="form-inline">
+                @Html.Label("Sexo: ", new { @class = "me-4" })
+                @Html.DropDownList("iidsexo", listaSexos, new { @class = "me-4 form-select" })
+            </div>
+
+        }
+    </div>
+</div>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(x => x.IIDCLIENTE)</th>
+            <th>@Html.DisplayNameFor(x => x.NOMBRE)</th>
+            <th>@Html.DisplayNameFor(x => x.APPATERNO)</th>
+            <th>@Html.DisplayNameFor(x => x.APMATERNO)</th>
+            <th>@Html.DisplayNameFor(x => x.DIRECCION)</th>
+            <th>@Html.DisplayNameFor(x => x.SEXO)</th>
+            <th>@Html.DisplayNameFor(x => x.EMAIL)</th>
+            <th>@Html.DisplayNameFor(x => x.TELEFONOCELULAR)</th>
+            <th>@Html.DisplayNameFor(x => x.TELEFONOFIJO)</th>
+            <th colspan="2">Acciones</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var item in Model)
+        {
+        <tr>
+            <td>@Html.DisplayFor(x => item.IIDCLIENTE)</td>
+            <td>@Html.DisplayFor(x => item.NOMBRE)</td>
+            <td>@Html.DisplayFor(x => item.APPATERNO)</td>
+            <td>@Html.DisplayFor(x => item.APMATERNO)</td>
+            <td>@Html.DisplayFor(x => item.DIRECCION)</td>
+            <td>@Html.DisplayFor(x => item.SEXO)</td>
+            <td>@Html.DisplayFor(x => item.EMAIL)</td>
+            <td>@Html.DisplayFor(x => item.TELEFONOCELULAR)</td>
+            <td>@Html.DisplayFor(x => item.TELEFONOFIJO)</td>
+            <td>@Html.ActionLink(" ", "Edit", "Cliente", new { id = item.IIDCLIENTE }, new { @class = "glyphicon glyphicon-edit" })</td>
+            <td><button class="glyphicon glyphicon-trash text-danger" data-toggle="modal" data-target="#exampleModal" onclick="agregar(@item.IIDCLIENTE)"></button></td>
+        </tr>
+        }
+    </tbody>
+</table>
+
+@using(Html.BeginForm("Delete", "Cliente", FormMethod.Post, new { @id = "frm" }))
+            {
+                @Html.Hidden("id")
+            }
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title text-primary" id="exampleModalLabel">Clientes</h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <span>Quieres eliminar el registro?</span>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="enviar()">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    let iidsexo = document.getElementById("iidsexo");
+
+    iidsexo.onchange = function () {
+        document.getElementById("frm").submit();
+    }
+
+    function agregar(id) {
+        document.getElementById("id").value = id;
+    }
+
+    function enviar() {
+        let frm = document.getElementById("frm");
+        frm.submit();
+    }
+</script>

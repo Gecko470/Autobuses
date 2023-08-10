@@ -1,0 +1,42 @@
+﻿@using Autobuses.Clases;
+@model IEnumerable<RolCLS>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.IIDROL)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NOMBRE)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DESCRIPCION)
+            </th>
+            <th>
+                Acciones
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(x => item.IIDROL)
+                </td>
+                <td>
+                    @Html.DisplayFor(x => item.NOMBRE)
+                </td>
+                <td>
+                    @Html.DisplayFor(x => item.DESCRIPCION)
+                </td>
+                <td>
+                    @*@Html.ActionLink(" ", "Edit", "Rol", new { id = item.IIDROL }, new { @class = "glyphicon glyphicon-edit" })*@
+                    <button class="glyphicon glyphicon-edit text-primary" data-toggle="modal" data-target="#exampleModal" onclick="editar(@item.IIDROL)"></button>
+                    <button class="glyphicon glyphicon-trash text-danger" data-toggle="modal" data-target="#deleteModal" onclick="eliminar(@item.IIDROL)"></button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

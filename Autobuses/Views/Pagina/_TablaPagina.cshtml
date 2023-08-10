@@ -1,0 +1,46 @@
+﻿@using Autobuses.Clases
+@model IEnumerable<PaginaCLS>
+
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.IIDPAGINA)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MENSAJE)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ACCION)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CONTROLADOR)
+            </th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IIDPAGINA)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.MENSAJE)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ACCION)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CONTROLADOR)
+                </td>
+                <td>
+                    <button class="glyphicon glyphicon-edit text-primary" data-toggle="modal" data-target="#exampleModal" onclick="editar(@item.IIDPAGINA)"></button>
+                    <button class="glyphicon glyphicon-trash text-danger" data-toggle="modal" data-target="#deleteModal" onclick="eliminar(@item.IIDPAGINA)"></button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

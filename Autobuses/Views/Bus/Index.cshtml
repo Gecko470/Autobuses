@@ -1,0 +1,181 @@
+﻿@model IEnumerable<Autobuses.Clases.BusCLS>
+
+@{
+    ViewBag.Title = "Buses";
+
+    List<SelectListItem> listaSucursales = ViewBag.listaSucursales;
+    List<SelectListItem> listaTipoBus = ViewBag.listaTipoBus;
+    List<SelectListItem> listaModelos = ViewBag.listaModelos;
+    List<SelectListItem> listaMarcas = ViewBag.listaMarcas;
+}
+
+<h2>Buses</h2>
+<hr />
+@Html.ActionLink("Nuevo", "Create", "Bus", new { }, new { @class = "btn btn-primary" })
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.IIDBUS)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PLACA)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FECHACOMPRA)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Sucursal)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TipoBus)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Modelo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Marca)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NUMEROFILAS)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NUMEROCOLUMNAS)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DESCRIPCION)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.OBSERVACION)
+            </th>
+            <th colspan="2">Acciones</th>
+        </tr>
+        @using (Html.BeginForm("Index", "Bus", FormMethod.Post, new { @id = "frmBusquedas" }))
+        {
+            <tr>
+                <td>@Html.TextBox("IIDBUS", "", new { @class = "form-control" })</td>
+                <td>@Html.TextBox("PLACA", "", new { @class = "form-control" })</td>
+                <td>@Html.Editor("FECHACOMPRA", "Date", new { htmlAttributes = new { @class = "form-control" } })</td>
+                <td>@Html.DropDownList("IIDSUCURSAL", listaSucursales, new { @class = "form-control" })</td>
+                <td>@Html.DropDownList("IIDTIPOBUS", listaTipoBus, new { @class = "form-control" })</td>
+                <td>@Html.DropDownList("IIDMODELO", listaModelos, new { @class = "form-control" })</td>
+                <td>@Html.DropDownList("IIDMARCA", listaMarcas, new { @class = "form-control" })</td>
+                <td>@Html.TextBox("NUMEROFILAS", "", new { @class = "form-control" })</td>
+                <td>@Html.TextBox("NUMEROCOLUMNAS", "", new { @class = "form-control" })</td>
+                <td>@Html.TextBox("DESCRIPCION", "", new { @class = "form-control" })</td>
+                <td>@Html.TextBox("OBSERVACION", "", new { @class = "form-control" })</td>
+            </tr>
+        }
+
+    </thead>
+
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IIDBUS)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PLACA)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FECHACOMPRA)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Sucursal)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TipoBus)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Modelo)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Marca)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NUMEROFILAS)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NUMEROCOLUMNAS)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DESCRIPCION)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.OBSERVACION)
+                </td>
+                <td>
+                    @Html.ActionLink(" ", "Edit", "Bus", new { id = item.IIDBUS }, new { @class = "glyphicon glyphicon-edit" })
+                </td>
+                <td><button class="glyphicon glyphicon-trash text-danger" data-toggle="modal" data-target="#exampleModal" onclick="agregar(@item.IIDBUS)"></button></td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@using (Html.BeginForm("Delete", "Bus", FormMethod.Post, new { @id = "frm" }))
+{
+    @Html.Hidden("id")
+}
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title text-primary" id="exampleModalLabel">Buses</h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <span>Quieres eliminar el registro?</span>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="enviar()">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let IIDBUS = document.getElementById("IIDBUS");
+    let PLACA = document.getElementById("PLACA");
+    let FECHACOMPRA = document.getElementById("FECHACOMPRA");
+    let IIDSUCURSAL = document.getElementById("IIDSUCURSAL");
+    let IIDTIPOBUS = document.getElementById("IIDTIPOBUS");
+    let IIDMODELO = document.getElementById("IIDMODELO");
+    let IIDMARCA = document.getElementById("IIDMARCA");
+    let NUMEROFILAS = document.getElementById("NUMEROFILAS");
+    let NUMEROCOLUMNAS = document.getElementById("NUMEROCOLUMNAS");
+    let DESCRIPCION = document.getElementById("DESCRIPCION");
+    let OBSERVACION = document.getElementById("OBSERVACION");
+
+    let frmBusquedas = document.getElementById("frmBusquedas");
+
+    
+
+    IIDBUS.onkeyup = () => frmBusquedas.submit();
+    PLACA.onkeyup = () => frmBusquedas.submit();
+    FECHACOMPRA.onchange = () => frmBusquedas.submit();
+    IIDSUCURSAL.onchange = () => frmBusquedas.submit();
+    IIDTIPOBUS.onchange = () => frmBusquedas.submit();
+    IIDMODELO.onchange = () => frmBusquedas.submit();
+    IIDMARCA.onchange = () => frmBusquedas.submit();
+    NUMEROFILAS.onkeyup = () => frmBusquedas.submit();
+    NUMEROCOLUMNAS.onkeyup = () => frmBusquedas.submit();
+    DESCRIPCION.onkeyup = () => frmBusquedas.submit();
+    OBSERVACION.onkeyup = () => frmBusquedas.submit();
+
+
+    function agregar(id) {
+        document.getElementById("id").value = id;
+    }
+
+    function enviar() {
+        let frm = document.getElementById("frm");
+        frm.submit();
+    }
+</script>

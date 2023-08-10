@@ -1,0 +1,47 @@
+﻿@using Autobuses.Clases
+@model MarcaCLS
+@{
+    ViewBag.Title = "Marcas";
+    
+}
+
+<h2>Create</h2>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        @using (Html.BeginForm("Create", "Marca", FormMethod.Post, new { @id = "frm" }))
+        {
+
+            <div class="form-group">
+                @Html.LabelFor(x => x.NOMBRE)
+                @Html.TextBoxFor(x => x.NOMBRE, new { @class = "form form-control" })
+                @Html.ValidationMessage("NOMBRE", new { @class = "text-danger" })
+                @if (Model != null && !string.IsNullOrEmpty(Model.MensajeError))
+                {
+                @Html.Label(Model.MensajeError, Model.MensajeError, new { @class = "text-danger" })
+                }
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(x => x.DESCRIPCION)
+                @Html.TextBoxFor(x => x.DESCRIPCION, new { @class = "form form-control" })
+                @Html.ValidationMessage("DESCRIPCION", new { @class = "text-danger" })
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+                @Html.ActionLink("Cancelar", "Index", new { }, new { @class = "btn btn-danger" })
+                <input type="submit" value="Aceptar" class="btn btn-primary" />
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    let frm = document.getElementById("frm");
+
+    frm.onsubmit = function (e) {
+        e.preventDefault();
+
+        if (confirm("Quires guardar los cambios?") == 1) {
+            frm.submit();
+        }
+    }
+</script>

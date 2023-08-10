@@ -1,0 +1,64 @@
+﻿@using Autobuses.Clases
+@model IEnumerable<ViajeCLS>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.IIDVIAJE)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Origen)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Destino)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Bus)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PRECIO)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FECHAVIAJE)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NUMEROASIENTOSDISPONIBLES)
+            </th>
+            <th colspan="2">Acciones</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IIDVIAJE)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Origen)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Destino)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Bus)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PRECIO)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FECHAVIAJE)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NUMEROASIENTOSDISPONIBLES)
+                </td>
+                <td>
+                    <button class="glyphicon glyphicon-edit text-primary" data-toggle="modal" data-target="#exampleModal" onclick="editar(@item.IIDVIAJE)"></button>
+                    <button class="glyphicon glyphicon-trash text-danger" data-toggle="modal" data-target="#deleteModal" onclick="eliminar(@item.IIDVIAJE)"></button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

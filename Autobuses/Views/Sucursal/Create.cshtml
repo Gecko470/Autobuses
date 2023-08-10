@@ -1,0 +1,61 @@
+﻿@using Autobuses.Clases
+@model SucursalCLS
+@{
+    ViewBag.Title = "Sucursales";
+}
+
+<h2>Create</h2>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        @using (Html.BeginForm("Create", "Sucursal", FormMethod.Post, new { @id = "frm" }))
+        {
+
+            <div class="form-group">
+                @Html.LabelFor(x => x.NOMBRE)
+                @Html.TextBoxFor(x => x.NOMBRE, new { @class = "form form-control" })
+                @Html.ValidationMessage("NOMBRE", new { @class = "text-danger" })
+                @if (Model != null && !string.IsNullOrEmpty(Model.MensajeError))
+                {
+                    @Html.Label(Model.MensajeError, Model.MensajeError, new { @class = "text-danger" })
+                }
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(x => x.DIRECCION)
+                @Html.TextBoxFor(x => x.DIRECCION, new { @class = "form form-control" })
+                @Html.ValidationMessage("DIRECCION", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(x => x.TELEFONO)
+                @Html.TextBoxFor(x => x.TELEFONO, new { @class = "form form-control" })
+                @Html.ValidationMessage("TELEFONO", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(x => x.EMAIL)
+                @Html.TextBoxFor(x => x.EMAIL, new { @class = "form form-control" })
+                @Html.ValidationMessage("EMAIL", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(x => x.FECHAAPERTURA)
+                @Html.EditorFor(x => x.FECHAAPERTURA, new { htmlAttributes = new { @class = "form form-control" } })
+                @Html.ValidationMessage("FECHAAPERTURA", new { @class = "text-danger" })
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+                @Html.ActionLink("Cancelar", "Index", new { }, new { @class = "btn btn-danger" })
+                <input type="submit" value="Aceptar" class="btn btn-primary" />
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    let frm = document.getElementById("frm");
+
+    frm.onsubmit = function (e) {
+        e.preventDefault();
+
+        if (confirm("Quires guardar los cambios?") == 1) {
+            frm.submit();
+        }
+    }
+</script>

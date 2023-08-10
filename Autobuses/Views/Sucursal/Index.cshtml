@@ -1,0 +1,74 @@
+﻿@using Autobuses.Clases
+@model IEnumerable<SucursalCLS>
+
+@{
+    ViewBag.Title = "Sucursales";
+}
+
+<h2>Sucursales</h2>
+<hr />
+<div style="display: flex; justify-content: space-between;">
+    <div>
+        @Html.ActionLink("Nueva", "Create", "Sucursal", new { }, new { @class = "btn btn-primary" })
+    </div>
+
+    <div>
+        @using (Html.BeginForm("Index", "Sucursal", FormMethod.Get, new { @id = "frm" }))
+        {
+            <div class="form-inline">
+                @Html.Label("Nombre Sucursal: ", new { @class = "me-4" })
+                @Html.TextBox("nombre", "", new { @class = "me-4" })
+            </div>
+
+        }
+    </div>
+</div>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(x => x.IIDSUCURSAL)
+            </th>
+            <th>
+                @Html.DisplayNameFor(x => x.NOMBRE)
+            </th>
+            <th>
+                @Html.DisplayNameFor(x => x.DIRECCION)
+            </th>
+            <th>
+                @Html.DisplayNameFor(x => x.EMAIL)
+            </th>
+            <th>
+                @Html.DisplayNameFor(x => x.TELEFONO)
+            </th>
+            <th>
+                @Html.DisplayNameFor(x => x.FECHAAPERTURA)
+            </th>
+            <th colspan="2">Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+        <tr>
+            <td>@Html.DisplayFor(x => item.IIDSUCURSAL) </td>
+            <td>@Html.DisplayFor(x => item.NOMBRE) </td>
+            <td>@Html.DisplayFor(x => item.DIRECCION) </td>
+            <td>@Html.DisplayFor(x => item.EMAIL) </td>
+            <td>@Html.DisplayFor(x => item.TELEFONO) </td>
+            @*<td>@(string.Format("{0:dd-MM-yyyy}", item.FECHAAPERTURA))</td>*@
+            <td>@Html.DisplayFor(x => item.FECHAAPERTURA)</td>
+            <td>@Html.ActionLink(" ", "Edit", "Sucursal", new { id = item.IIDSUCURSAL }, new { @class = "glyphicon glyphicon-edit" })</td>
+            <td>@Html.ActionLink(" ", "Delete", "Sucursal", new { id = item.IIDSUCURSAL }, new { @class = "glyphicon glyphicon-trash text-danger" })</td>
+        </tr>
+        }
+    </tbody>
+</table>
+
+<script>
+    let nombre = document.getElementById("nombre");
+
+    nombre.onkeyup = function () {
+        document.getElementById("frm").submit();
+    }
+</script>

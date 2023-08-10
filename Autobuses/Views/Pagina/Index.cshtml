@@ -1,0 +1,158 @@
+﻿@model IEnumerable<Autobuses.Clases.PaginaCLS>
+
+@{
+    ViewBag.Title = "Páginas";
+}
+
+<h2>Páginas</h2>
+<hr />
+<div style="display: flex;justify-content: space-between;">
+    <div>
+        <button class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" onclick="agregar()">Nuevo</button>
+    </div>
+    <div>
+        @using (Ajax.BeginForm("Filtro", "Pagina", new { }, new AjaxOptions()
+        {
+            HttpMethod = "POST",
+            UpdateTargetId = "divTablaPagina",
+            InsertionMode = InsertionMode.Replace
+
+        }, new { @id = "frmBusquedas" }))
+        {
+            <div class="form-inline">
+                @Html.Label("Mensaje: ")
+                @Html.TextBox("mensaje", "", new { @class = "form-control" })
+            </div>
+        }
+    </div>
+</div>
+
+<div id="divTablaPagina">
+    @Html.Partial("_TablaPagina", Model)
+</div>
+
+@using (Ajax.BeginForm("Delete", "Pagina", new { }, new AjaxOptions()
+{
+    HttpMethod = "POST",
+    OnSuccess = "Refresh2"
+
+}, new { @id = "frmDelete" }))
+{
+    @Html.Hidden("idEliminar")
+}
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title text-primary" id="exampleModalLabel">Páginas</h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                @using (Ajax.BeginForm("Guardar", "Pagina", new { }, new AjaxOptions()
+                {
+                    HttpMethod = "POST",
+                    OnSuccess = "Refresh",
+                    UpdateTargetId = "divErrores"
+
+                }, new { @id = "frmCreate" }))
+                {
+                    @Html.Hidden("operacion")
+                    <div class="form-group">
+                        @Html.Label("Mensaje")
+                        @Html.TextBox("MENSAJE", "", new { @class = "form-control" })
+                    </div>
+                    <div class="form-group">
+                        @Html.Label("Acción")
+                        @Html.TextBox("ACCION", "", new { @class = "form-control" })
+                    </div>
+                    <div class="form-group">
+                        @Html.Label("Controlador")
+                        @Html.TextBox("CONTROLADOR", "", new { @class = "form-control" })
+                    </div>
+                }
+                <div id="divErrores"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btnClose" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button class="btn btn-primary" onclick="create()">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title text-primary" id="deleteModalLabel">Roles</h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <span>Quires borrar el registro seleccionado?</span>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btnClose2" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="eliminarRegistro()">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById("mensaje").onkeyup = () => {
+        $("#frmBusquedas").trigger("submit");
+    }
+    function agregar() {
+        limpiar();
+        document.getElementById("operacion").value = -1;
+    }
+
+    function editar(id) {
+        limpiar();
+        document.getElementById("operacion").value = id;
+        $.get("/Pagina/Edit/?id=" + id, (data) => {
+            document.getElementById("MENSAJE").value = data.MENSAJE;
+            document.getElementById("ACCION").value = data.ACCION;
+            document.getElementById("CONTROLADOR").value = data.CONTROLADOR;
+        });
+    }
+
+    function limpiar() {
+        document.getElementById("MENSAJE").value = "";
+        document.getElementById("ACCION").value = "";
+        document.getElementById("CONTROLADOR").value = "";
+        document.getElementById("divErrores").innerHTML = "";
+    }
+
+    function Refresh(resp) {
+        if (resp == "0" || resp == "1") {
+            document.getElementById("btnClose").click();
+            $("#frmBusquedas").trigger("submit");
+        }
+    }
+
+    function create() {
+        $("#frmCreate").trigger("submit");
+    }
+
+    function eliminar(id) {
+        document.getElementById("idEliminar").value = id;
+    }
+
+    function eliminarRegistro() {
+        $("#frmDelete").trigger("submit");
+    }
+
+    function Refresh2(resp) {
+        if (resp == "1") {
+            document.getElementById("btnClose2").click();
+            $("#frmBusquedas").trigger("submit");
+        }
+    }
+</script>
+

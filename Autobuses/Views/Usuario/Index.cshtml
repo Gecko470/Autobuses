@@ -1,0 +1,115 @@
+﻿@model IEnumerable<Autobuses.Clases.UsuarioCLS>
+
+@{
+    ViewBag.Title = "Usuarios";
+    List<SelectListItem> listaPersonas = ViewBag.listaPersonas;
+    List<SelectListItem> listaRoles = ViewBag.listaRoles;
+}
+
+<h2>Usuarios</h2>
+<hr />
+<div style="display: flex;justify-content: space-between;">
+    <div>
+        <button class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" onclick="agregar()">Nuevo</button>
+    </div>
+    <div>
+        @using (Ajax.BeginForm("Filtrar", "Usuario", new { }, new AjaxOptions()
+        {
+            HttpMethod = "POST",
+            UpdateTargetId = "divTablaUsuario",
+            InsertionMode = InsertionMode.Replace
+
+        }, new { @id = "frmBusquedas" }))
+        {
+            <div class="form-inline">
+                @Html.Label("Nombre Persona", new { @class = "me-4" })
+                @Html.TextBox("nombre", "", new { @class = "form-control" })
+            </div>
+        }
+    </div>
+</div>
+
+
+<div id="divTablaUsuario">
+    @Html.Partial("_TablaUsuario", Model)
+</div>
+
+
+@using (Html.BeginForm("Delete", "Usuario", FormMethod.Post, new { @id = "frm" }))
+{
+    @Html.Hidden("id")
+}
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title text-primary" id="exampleModalLabel">Usuarios</h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                @using (Ajax.BeginForm("Guardar", "Usuario", new { }, new AjaxOptions()
+                {
+                    HttpMethod = "POST",
+                    OnSuccess = "Refresh"
+
+                }, new { @id = "frmCreate" }))
+                {
+                    @Html.Hidden("operacion")
+                    @Html.Hidden("persona")
+                    <div class="form-group">
+                        @Html.Label("Nombre")
+                        @Html.TextBox("NOMBREUSUARIO", "", new { @class = "form-control" })
+                    </div>
+                    <div class="form-group">
+                        @Html.Label("Password")
+                        @Html.Password("CONTRA", "", new { @class = "form-control" })
+                    </div>
+                    <div class="form-group">
+                        @Html.Label("Persona")
+                        @Html.DropDownList("IID", listaPersonas, new { @class = "form-control" })
+                    </div>
+                    <div class="form-group">
+                        @Html.Label("Rol")
+                        @Html.DropDownList("IIDROL", listaRoles, new { @class = "form-control" })
+                    </div>
+
+                }
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btnClose" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button class="btn btn-primary" onclick="create()">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let IID = document.getElementById("IID");
+    IID.onchange = () => document.getElementById("persona").value = IID.options[IID.selectedIndex].text;
+
+
+    let txtNombre = document.getElementById("nombre");
+    txtNombre.onkeyup = () => {
+        $("#frmBusquedas").trigger("submit");
+    }
+
+    function agregar() {
+        document.getElementById("operacion").value = 1;
+    }
+
+    function Refresh(resp) {
+        console.log(resp);
+        if (resp != 0) {
+            document.getElementById("btnClose").click();
+            $("#frmBusquedas").trigger("submit");
+        }
+    }
+
+    function create() {
+        $("#frmCreate").trigger("submit");
+    }
+</script>
+

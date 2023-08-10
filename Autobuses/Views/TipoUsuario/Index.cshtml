@@ -1,0 +1,104 @@
+﻿@model IEnumerable<Autobuses.Clases.TipoUsuarioCLS>
+
+@{
+    ViewBag.Title = "Tipos Usuario";
+}
+
+<h2>Tipos Usuario</h2>
+<hr />
+<div>
+    @Html.ActionLink("Nuevo", "Create", "TipoUsuario", new { }, new { @class = "btn btn-primary" })
+</div>
+@using (Html.BeginForm("Index", "TipoUsuario", FormMethod.Post, new { @id = "frmBusquedas" }))
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.IIDTIPOUSUARIO)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.NOMBRE)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.DESCRIPCION)
+                </th>
+                <th colspan="2">Acciones</th>
+            </tr>
+            <tr>
+                <td>@Html.TextBox("IIDTIPOUSUARIO", "", new { @class = "form-control" })</td>
+                <td>@Html.TextBox("NOMBRE", "", new { @class = "form-control" })</td>
+                <td>@Html.TextBox("DESCRIPCION", "", new { @class = "form-control" })</td>
+                <td></td>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.IIDTIPOUSUARIO)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.NOMBRE)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DESCRIPCION)
+                    </td>
+                    <td>
+                        @Html.ActionLink(" ", "Edit", "Tipousuario", new { id = item.IIDTIPOUSUARIO }, new { @class = "glyphicon glyphicon-edit" })
+                    </td>
+                    <td><button class="glyphicon glyphicon-trash text-danger" data-toggle="modal" data-target="#exampleModal" onclick="agregar(@item.IIDTIPOUSUARIO)"></button></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
+@using (Html.BeginForm("Delete", "TipoUsuario", FormMethod.Post, new { @id = "frm" }))
+{
+    @Html.Hidden("id")
+}
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title text-primary" id="exampleModalLabel">Clientes</h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <span>Quieres eliminar el registro?</span>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="enviar()">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    let IIDTIPOUSUARIO = document.getElementById("IIDTIPOUSUARIO");
+    let NOMBRE = document.getElementById("NOMBRE");
+    let DESCRIPCION = document.getElementById("DESCRIPCION");
+    let frmBusquedas = document.getElementById("frmBusquedas");
+
+    IIDTIPOUSUARIO.onkeyup = () => frmBusquedas.submit();
+    NOMBRE.onkeyup = () => frmBusquedas.submit();
+    DESCRIPCION.onkeyup = () => frmBusquedas.submit();
+
+    function agregar(id) {
+        document.getElementById("id").value = id;
+    }
+
+    function enviar() {
+        let frm = document.getElementById("frm");
+        frm.submit();
+    }
+</script>

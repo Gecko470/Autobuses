@@ -1,0 +1,159 @@
+﻿@using Autobuses.Clases;
+@model IEnumerable<RolCLS>
+@{
+    ViewBag.Title = "Roles";
+}
+
+<h2>Roles</h2>
+<hr />
+<div style="display: flex;justify-content: space-between;">
+    <div>
+        <button class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" onclick="agregar()">Nuevo</button>
+    </div>
+    <div>
+        @using (Ajax.BeginForm("Filtro", new { }, new AjaxOptions()
+        {
+            HttpMethod = "POST",
+            UpdateTargetId = "divTablaRol",
+            InsertionMode = InsertionMode.Replace
+
+        }, new { @id = "frmBusquedas" }))
+        {
+            <div class="form-inline">
+                @Html.Label("Nombre Rol", new { @class = "me-4" })
+                @Html.TextBox("nombreRol", "", new { @class = "form-control" })
+            </div>
+        }
+    </div>
+</div>
+
+
+<div id="divTablaRol">
+    @Html.Partial("_TablaRol", Model)
+</div>
+
+
+@using (Ajax.BeginForm("Delete", "Rol", new AjaxOptions()
+{
+    HttpMethod = "POST",
+    UpdateTargetId = "divTablaRol",
+    InsertionMode = InsertionMode.Replace
+
+}, new { @id = "frmDelete"}))
+{
+    @Html.Hidden("idEliminar")
+}
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title text-primary" id="exampleModalLabel">Roles</h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                @using (Ajax.BeginForm("Guardar", "Rol", new { }, new AjaxOptions()
+                {
+                    HttpMethod = "POST",
+                    OnSuccess = "Refresh",
+                    UpdateTargetId = "divErrores"
+
+                }, new { @id = "frmCreate" }))
+                {
+                    @Html.Hidden("operacion")
+                    <div class="form-group">
+                        @Html.Label("Nombre")
+                        @Html.TextBox("NOMBRE", "", new { @class = "form-control", @id = "txtNombre" })
+                    </div>
+                    <div class="form-group">
+                        @Html.Label("Descripción")
+                        @Html.TextBox("DESCRIPCION", "", new { @class = "form-control", @id = "txtDescripcion" })
+                    </div>
+                }
+                <div id="divErrores"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btnClose" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button class="btn btn-primary" onclick="create()">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title text-primary" id="deleteModalLabel">Roles</h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <span>Quires borrar el registro seleccionado?</span>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btnClose2" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="enviar()">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let nombreRol = document.getElementById("nombreRol");
+
+    nombreRol.onkeyup = () => {
+        $("#frmBusquedas").trigger("submit");
+    }
+
+    function limpiar() {
+        document.getElementById("divErrores").innerHTML = "";
+        document.getElementById("txtNombre").value = "";
+        document.getElementById("txtDescripcion").value = "";
+    }
+    function agregar() {
+        limpiar();
+        document.getElementById("operacion").value = -1;
+    }
+
+    function editar(id) {
+        limpiar();
+        document.getElementById("operacion").value = id;
+        $.get("/Rol/Edit/?id=" + id, (data) => {
+            document.getElementById("txtNombre").value = data.NOMBRE;
+            document.getElementById("txtDescripcion").value = data.DESCRIPCION;
+        });
+    }
+
+    function Refresh(resp) {
+        if (resp == "1" || resp == "0") {
+            document.getElementById("btnClose").click();
+            $("#frmBusquedas").trigger("submit");
+        }
+        else {
+
+        }
+    }
+
+    function create() {
+        $("#frmCreate").trigger("submit");
+    }
+
+    function eliminar(id) {
+        document.getElementById("idEliminar").value = id;
+    }
+
+    function enviar() {
+        let id = document.getElementById("idEliminar").value;
+        $.get("/Rol/Delete/?idEliminar=" + id, (resp) => {
+            if (resp == "1") {
+                document.getElementById("btnClose2").click();
+                $("#frmBusquedas").trigger("submit");
+            }
+        });
+    }
+</script>

@@ -1,0 +1,50 @@
+﻿@model IEnumerable<Autobuses.Clases.UsuarioCLS>
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.IIDUSUARIO)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NOMBREUSUARIO)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Persona)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TIPOUSUARIO)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Rol)
+            </th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var item in Model)
+        {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.IIDUSUARIO)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NOMBREUSUARIO)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Persona)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TIPOUSUARIO)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Rol)
+            </td>
+            <td>
+                @Html.ActionLink(" ", "Edit", "Usuario", new { id = item.IIDUSUARIO }, new { @class = "glyphicon glyphicon-edit" })
+                <button class="glyphicon glyphicon-trash text-danger" data-toggle="modal" data-target="#exampleModal" onclick="agregar(@item.IIDUSUARIO)"></button>
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>

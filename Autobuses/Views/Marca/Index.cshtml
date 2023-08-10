@@ -1,0 +1,55 @@
+﻿@using Autobuses.Clases
+@model IEnumerable<MarcaCLS>
+@{
+    ViewBag.Title = "Marcas";
+}
+
+<h2>Marcas</h2>
+<hr />
+<div style="display: flex; justify-content: space-between;">
+    <div>
+        @Html.ActionLink("Nueva", "Create", "Marca", new { }, new { @class = "btn btn-primary" })
+    </div>
+
+    <div>
+        @using (Html.BeginForm("Index", "Marca", FormMethod.Get))
+        {
+            <div class="form-inline">
+                @Html.Label("Nombre Marca: ", new { @class = "me-4" })
+                @Html.TextBox("nombre", "", new { @class = "me-4" })
+                <input type="submit" value="Buscar" class="btn btn-primary" />
+            </div>
+
+        }
+    </div>
+</div>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th style="width: 10%">
+                @Html.DisplayNameFor(x => x.IIDMARCA)
+            </th>
+            <th style="width: 15%">
+                @Html.DisplayNameFor(x => x.NOMBRE)
+            </th>
+            <th style="width: 75%">
+                @Html.DisplayNameFor(x => x.DESCRIPCION)
+            </th>
+            <th colspan="2">Acciones</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(x => item.IIDMARCA) </td>
+                <td>@Html.DisplayFor(x => item.NOMBRE) </td>
+                <td>@Html.DisplayFor(x => item.DESCRIPCION) </td>
+                <td>@Html.ActionLink(" ", "Edit", "Marca", new { id = item.IIDMARCA }, new { @class = "glyphicon glyphicon-edit" })</td>
+                <td>@Html.ActionLink(" ", "Delete", "Marca", new { id = item.IIDMARCA }, new { @class = "glyphicon glyphicon-trash text-danger" })</td>
+            </tr>
+        }
+    </tbody>
+</table>

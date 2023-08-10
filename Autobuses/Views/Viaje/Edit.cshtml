@@ -1,0 +1,108 @@
+﻿
+@model Autobuses.Clases.ViajeCLS
+
+@{
+    ViewBag.Title = "Viajes";
+    List<SelectListItem> listaLugares = ViewBag.listaLugares;
+    List<SelectListItem> listaBuses = ViewBag.listaBuses;
+}
+
+<h2>Edit</h2>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        @using (Html.BeginForm("Edit", "Viaje", FormMethod.Post, new { @id = "frm" }))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-horizontal">
+
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                @Html.TextBoxFor(x => x.IIDVIAJE, new { @class = "hidden"})
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IIDLUGARORIGEN, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.DropDownList("IIDLUGARORIGEN", listaLugares, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.IIDLUGARORIGEN, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IIDLUGARDESTINO, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.DropDownListFor(x => x.IIDLUGARDESTINO, listaLugares, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.IIDLUGARDESTINO, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IIDBUS, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.DropDownList("IIDBUS", listaBuses, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.IIDBUS, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.PRECIO, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.PRECIO, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.PRECIO, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.FECHAVIAJE, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.FECHAVIAJE, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.FECHAVIAJE, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.NUMEROASIENTOSDISPONIBLES, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.NUMEROASIENTOSDISPONIBLES, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.NUMEROASIENTOSDISPONIBLES, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div style="display: flex; justify-content: space-between;">
+                    @Html.ActionLink("Cancelar", "Index", new { }, new { @class = "btn btn-danger" })
+                    <input type="button" value="Aceptar" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" />
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title text-primary" id="exampleModalLabel">Clientes</h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <span>Quires guardar los cambios?</span>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="enviar()">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    let frm = document.getElementById("frm");
+
+    function enviar() {
+        frm.submit();
+    }
+
+</script>
+

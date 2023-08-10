@@ -1,0 +1,97 @@
+﻿@using Autobuses.Clases
+@model EmpleadoCLS
+@{
+    ViewBag.Title = "Empleados";
+    List<SelectListItem> tiposUsuarios = ViewBag.tiposUsuarios;
+    List<SelectListItem> tiposContratos = ViewBag.tiposContratos;
+    List<SelectListItem> listaSexos = ViewBag.listaSexos;
+}
+
+<h2>Edit</h2>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        @using (Html.BeginForm("Edit", "Empleado", FormMethod.Post, new { @id = "frm" }))
+        {
+            @Html.TextBoxFor(x => x.IIDEMPLEADO, new { @class = "hidden" })
+            <div class="form-group">
+                @Html.LabelFor(x => x.NOMBRE)
+                @Html.TextBoxFor(x => x.NOMBRE, new { @class = "form form-control" })
+                @Html.ValidationMessage("NOMBRE", new { @class = "text-danger" })
+                @if (Model != null && !string.IsNullOrEmpty(Model.MensajeError))
+                {
+                    @Html.Label(Model.MensajeError, Model.MensajeError, new { @class = "text-danger" })
+                }
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(x => x.APPATERNO)
+                @Html.TextBoxFor(x => x.APPATERNO, new { @class = "form form-control" })
+                @Html.ValidationMessage("APPATERNO", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(x => x.APMATERNO)
+                @Html.TextBoxFor(x => x.APMATERNO, new { @class = "form form-control" })
+                @Html.ValidationMessage("APMATERNO", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(x => x.FECHACONTRATO)
+                @Html.EditorFor(x => x.FECHACONTRATO, new { htmlAttributes = new { @class = "form form-control" } })
+                @Html.ValidationMessage("FECHACONTRATO", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(x => x.SUELDO)
+                @Html.TextBoxFor(x => x.SUELDO, new { @class = "form form-control" })
+                @Html.ValidationMessage("SUELDO", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(x => x.IIDTIPOCONTRATO)
+                @Html.DropDownListFor(x => x.IIDTIPOCONTRATO, tiposContratos, new { @class = "form form-control" })
+                @Html.ValidationMessage("IIDTIPOCONTRATO", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(x => x.IIDTIPOUSUARIO)
+                @Html.DropDownListFor(x => x.IIDTIPOUSUARIO, tiposUsuarios, new { @class = "form form-control" })
+                @Html.ValidationMessage("IIDTIPOUSUARIO", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(x => x.IIDSEXO)
+                @Html.DropDownListFor(x => x.IIDSEXO, listaSexos, new { @class = "form form-control" })
+                @Html.ValidationMessage("IIDSEXO", new { @class = "text-danger" })
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+                @Html.ActionLink("Cancelar", "Index", new { }, new { @class = "btn btn-danger" })
+                <input type="button" value="Aceptar" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" />
+            </div>
+        }
+    </div>
+</div>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title text-primary" id="exampleModalLabel">Clientes</h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <span>Quires guardar los cambios?</span>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="enviar()">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    let frm = document.getElementById("frm");
+
+    function enviar() {
+        frm.submit();
+    }
+
+</script>
