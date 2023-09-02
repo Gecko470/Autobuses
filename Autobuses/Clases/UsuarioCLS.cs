@@ -17,7 +17,6 @@ namespace Autobuses.Clases
         [Required]
         public string CONTRA { get; set; }
         [Display(Name = "Tipo Usuario")]
-        [Required]
         public string TIPOUSUARIO { get; set; }
         [Display(Name = "IID")]
         [Required]

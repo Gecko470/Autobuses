@@ -1,0 +1,157 @@
+﻿@using Autobuses.Clases
+@model UsuarioCLS
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Autobuses - Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <!-- vinculo a bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <!-- Temas-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <!-- se vincula al hoja de estilo para definir el aspecto del formulario de login-->
+    <style>
+
+
+        body {
+            font-size: 12px;
+        }
+
+        #Contenedor {
+            width: 400px;
+            margin: 50px auto;
+            background-color: #F3EDED;
+            border: 1px solid #ECE8E8;
+            height: 400px;
+            border-radius: 8px;
+            padding: 0px 9px 0px 9px;
+        }
+
+
+        .Icon span {
+            background: #A8A6A6;
+            padding: 20px;
+            border-radius: 120px;
+        }
+
+        .Icon {
+            margin-top: 10px;
+            margin-bottom: 10px;
+            color: #FFF;
+            font-size: 50px;
+            text-align: center;
+        }
+
+        .opcioncontra {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div id="Contenedor">
+        <div class="Icon">
+            <!--Icono de usuario-->
+            <span class="glyphicon glyphicon-user"></span>
+        </div>
+        <div class="ContentForm">
+            @using (Ajax.BeginForm("Login", "Login", new { }, new AjaxOptions()
+            {
+                HttpMethod = "POST",
+                OnSuccess = "Acceder",
+                UpdateTargetId = "divResp",
+                InsertionMode = InsertionMode.Replace
+
+            }, new { @id = "frmLogin" }))
+            {
+                <div class="input-group input-group-lg">
+                    <span class="input-group-addon" id="sizing-addon1"><i class="glyphicon glyphicon-envelope"></i></span>
+                    @Html.TextBox("NOMBREUSUARIO", null, new { @class = "form-control", @placeholder = "Usuario" })
+                </div>
+                <br>
+                <div class="input-group input-group-lg">
+                    <span class="input-group-addon" id="sizing-addon1"><i class="glyphicon glyphicon-lock"></i></span>
+                    @Html.Password("CONTRA", null, new { @class = "form-control", @placeholder = "*******" })
+                </div>
+                <br>
+                <div id="divResp"></div>
+                <button class="btn btn-lg btn-primary btn-block btn-signin" id="IngresoLog" type="submit">Entrar</button>
+                <div class="opcioncontra"><a href="#" data-toggle="modal" data-target="#exampleModal">Olvidaste tu contraseña?</a></div>
+            }
+        </div>
+    </div>
+
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title text-primary" id="exampleModalLabel">Recuperar Password</h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    @using (Ajax.BeginForm("Password", "Login", new { }, new AjaxOptions()
+                    {
+                        HttpMethod = "POST",
+                        OnSuccess = "Refresh",
+                        UpdateTargetId = "divErrores",
+                        InsertionMode = InsertionMode.Replace
+
+                    }, new { @id = "frmPass" }))
+                    {
+                        <div class="form-group">
+                            @Html.Label("Usuario")
+                            @Html.TextBox("nombreUsuario", "", new { @class = "form-control" })
+                        </div>
+                        <div class="form-group">
+                            @Html.Label("Email")
+                            @Html.TextBox("email", "", new { @class = "form-control" })
+                        </div>
+                        <div class="form-group">
+                            @Html.Label("Teléf. Móvil")
+                            @Html.TextBox("tlfMovil", "", new { @class = "form-control" })
+                        </div>
+                    }
+                    <div id="divErrores"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="btnClose" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    <button class="btn btn-primary" onclick="enviar()">Aceptar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/Scripts/jquery-3.4.1.min.js"></script>
+    <script src="~/Scripts/jquery.unobtrusive-ajax.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+
+    <script>
+        function Acceder(resp) {
+            if (resp == "") {
+                window.location = "@Url.Action("Index", "Home")";
+            }
+        }
+
+        function Refresh(resp) {
+            if (resp == "") {
+                document.getElementById("btnClose").click();
+            }
+        }
+
+        function enviar() {
+            $("#frmPass").trigger("submit");
+        }
+
+    </script>
+
+</body>
+
+</html>
+

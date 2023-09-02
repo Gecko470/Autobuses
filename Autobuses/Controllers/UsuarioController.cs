@@ -10,15 +10,17 @@ using System.Transactions;
 using System.Web;
 using System.Web.Mvc;
 using System.Text;
+using Autobuses.Filters;
 
 namespace Autobuses.Controllers
 {
+    [Acceso]
     public class UsuarioController : Controller
     {
         // GET: Usuario
         public async Task<ActionResult> Index()
         {
-            await listaPersonas();
+            await personas();
             await roles();
 
             List<UsuarioCLS> listUsuarioClientes = new List<UsuarioCLS>();
@@ -70,7 +72,7 @@ namespace Autobuses.Controllers
 
         public async Task<ActionResult> Filtrar(string nombre)
         {
-            await listaPersonas();
+            await personas();
             await roles();
 
             List<UsuarioCLS> listUsuarioClientes = new List<UsuarioCLS>();
@@ -158,59 +160,150 @@ namespace Autobuses.Controllers
             return PartialView("_TablaUsuario", list);
         }
 
-        public async Task<int> Guardar(int operacion, string persona, UsuarioCLS oUsuarioCLS)
+        public async Task<string> Guardar(int operacion, string persona, UsuarioCLS oUsuarioCLS)
         {
-            int resp = 0;
+            string resp = "";
+
             Usuario usuario = new Usuario();
 
             try
             {
-                //using (TransactionScope scope = new TransactionScope())
-                //{
-                using (var bd = new BDPasajeEntities())
+                if (!ModelState.IsValid)
                 {
+                    var errores = (from state in ModelState.Values
+                                   from error in state.Errors
+                                   select error.ErrorMessage).ToList();
 
-                    if (operacion == 1)
+                    resp += "<ul class='list-group'>";
+                    foreach (var item in errores)
                     {
-                        usuario.NOMBREUSUARIO = oUsuarioCLS.NOMBREUSUARIO;
-                        SHA256Managed sha = new SHA256Managed();
-                        byte[] passBytes = Encoding.Default.GetBytes(oUsuarioCLS.CONTRA);
-                        string pass = BitConverter.ToString(sha.ComputeHash(passBytes)).Replace("-", "");
-                        usuario.CONTRA = pass;
-                        usuario.TIPOUSUARIO = persona.Substring(persona.Length - 2, 1);
-                        usuario.IID = oUsuarioCLS.IID;
-                        usuario.IIDROL = oUsuarioCLS.IIDROL;
-                        usuario.bhabilitado = 1;
-
-                        bd.Usuario.Add(usuario);
-
-                        if (usuario.TIPOUSUARIO == "C")
-                        {
-                            Cliente cliente = await bd.Cliente.FirstOrDefaultAsync(x => x.IIDCLIENTE == oUsuarioCLS.IID);
-                            cliente.bTieneUsuario = 1;
-                        }
-                        else
-                        {
-                            Empleado empleado = await bd.Empleado.FirstOrDefaultAsync(x => x.IIDEMPLEADO == oUsuarioCLS.IID);
-                            empleado.bTieneUsuario = 1;
-                        }
-
-                        resp = await bd.SaveChangesAsync();
+                        resp += "<li class='list-group-item text-danger'>" + item + "</li>";
                     }
+                    resp += "</ul>";
                 }
+                else
+                {
+                    using (TransactionScope scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+                    {
+                        using (var bd = new BDPasajeEntities())
+                        {
 
-                //    scope.Complete();
-                //}
+                            if (operacion == -1)
+                            {
+                                var existe = await bd.Usuario.AnyAsync(x => x.NOMBREUSUARIO == oUsuarioCLS.NOMBREUSUARIO);
+                                if (existe)
+                                {
+                                    resp += "<ul class='list-group'>";
+                                    resp += "<li class='list-group-item text-danger'>Ya existe ese Usuario en la BD..</li>";
+                                    resp += "</ul>";
+                                }
+                                else
+                                {
+                                    usuario.NOMBREUSUARIO = oUsuarioCLS.NOMBREUSUARIO;
+                                    SHA256Managed sha = new SHA256Managed();
+                                    byte[] passBytes = Encoding.Default.GetBytes(oUsuarioCLS.CONTRA);
+                                    string pass = BitConverter.ToString(sha.ComputeHash(passBytes)).Replace("-", "");
+                                    usuario.CONTRA = pass;
+                                    usuario.TIPOUSUARIO = persona.Substring(persona.Length - 2, 1);
+                                    usuario.IID = oUsuarioCLS.IID;
+                                    usuario.IIDROL = oUsuarioCLS.IIDROL;
+                                    usuario.bhabilitado = 1;
+
+                                    bd.Usuario.Add(usuario);
+
+                                    if (usuario.TIPOUSUARIO == "C")
+                                    {
+                                        Cliente cliente = await bd.Cliente.FirstOrDefaultAsync(x => x.IIDCLIENTE == oUsuarioCLS.IID);
+                                        cliente.bTieneUsuario = 1;
+                                    }
+                                    else
+                                    {
+                                        Empleado empleado = await bd.Empleado.FirstOrDefaultAsync(x => x.IIDEMPLEADO == oUsuarioCLS.IID);
+                                        empleado.bTieneUsuario = 1;
+                                    }
+
+                                    await bd.SaveChangesAsync();
+
+                                    resp = "1";
+                                }
+
+                            }
+                            else
+                            {
+                                var existe = await bd.Usuario.AnyAsync(x => x.NOMBREUSUARIO == oUsuarioCLS.NOMBREUSUARIO && x.IIDUSUARIO != operacion);
+                                if (existe)
+                                {
+                                    resp += "<ul class='list-group'>";
+                                    resp += "<li class='list-group-item text-danger'>Ya existe ese Usuario en la BD..</li>";
+                                    resp += "</ul>";
+                                }
+                                else
+                                {
+                                    Usuario usuarioBD = await bd.Usuario.FirstOrDefaultAsync(x => x.IIDUSUARIO == operacion);
+
+                                    usuarioBD.NOMBREUSUARIO = oUsuarioCLS.NOMBREUSUARIO;
+                                    usuarioBD.IIDROL = oUsuarioCLS.IIDROL;
+
+                                    await bd.SaveChangesAsync();
+                                    resp = "1";
+                                }
+                            }
+                        }
+
+                        scope.Complete();
+                    }
+
+                }
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                resp = ex.Message;
             }
 
             return resp;
         }
 
-        private async Task listaPersonas()
+        public async Task<JsonResult> Edit(int id)
+        {
+            UsuarioCLS usuarioCLS = new UsuarioCLS();
+
+            using (var bd = new BDPasajeEntities())
+            {
+                Usuario usuario = await bd.Usuario.FirstOrDefaultAsync(x => x.IIDUSUARIO == id);
+
+                usuarioCLS.IIDUSUARIO = usuario.IIDUSUARIO;
+                usuarioCLS.NOMBREUSUARIO = usuario.NOMBREUSUARIO;
+                usuarioCLS.IIDROL = (int)usuario.IIDROL;
+
+            }
+            return Json(usuarioCLS, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public async Task<string> Delete(int idEliminar)
+        {
+            string resp = "";
+            try
+            {
+                using (var bd = new BDPasajeEntities())
+                {
+                    Usuario usuario = await bd.Usuario.FirstOrDefaultAsync(x => x.IIDUSUARIO == idEliminar);
+                    usuario.bhabilitado = 0;
+
+                    await bd.SaveChangesAsync();
+
+                    resp = "1";
+                }
+            }
+            catch (Exception ex)
+            {
+                resp = ex.Message;
+            }
+
+            return resp;
+        }
+
+        private async Task personas()
         {
             List<SelectListItem> listaPersonas = new List<SelectListItem>();
 
@@ -240,7 +333,7 @@ namespace Autobuses.Controllers
                 listaPersonas.Insert(0, new SelectListItem()
                 {
                     Text = "Seleccione..",
-                    Value = "0"
+                    Value = ""
                 });
             }
 
@@ -261,6 +354,12 @@ namespace Autobuses.Controllers
                                         Value = item.IIDROL.ToString()
 
                                     }).ToListAsync();
+
+                listaRoles.Insert(0, new SelectListItem()
+                {
+                    Text = "Seleccione..",
+                    Value = ""
+                });
             }
 
             ViewBag.listaRoles = listaRoles;

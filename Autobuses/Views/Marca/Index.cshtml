@@ -11,16 +11,22 @@
         @Html.ActionLink("Nueva", "Create", "Marca", new { }, new { @class = "btn btn-primary" })
     </div>
 
-    <div>
-        @using (Html.BeginForm("Index", "Marca", FormMethod.Get))
-        {
-            <div class="form-inline">
-                @Html.Label("Nombre Marca: ", new { @class = "me-4" })
-                @Html.TextBox("nombre", "", new { @class = "me-4" })
-                <input type="submit" value="Buscar" class="btn btn-primary" />
-            </div>
+    <div style="display: flex; align-content: center; justify-content: space-between; width: 500px;">
+        <div style="display: flex; align-content: center; justify-content: space-between; gap: 10px;">
+            @Html.ActionLink("Excel", "Excel", "Marca", new { }, new { @class = "btn btn-success" })
+            @Html.ActionLink("PDF", "Pdf", "Marca", new { }, new { @class = "btn btn-danger", @target = "_blank" })
+        </div>
+        <div>
+            @using (Html.BeginForm("Index", "Marca", FormMethod.Get))
+            {
+                <div class="form-inline">
+                    @Html.Label("Nombre Marca: ", new { @class = "me-4" })
+                    @Html.TextBox("nombre", "", new { @class = "me-4" })
+                    <input type="submit" value="Buscar" class="btn btn-primary" />
+                </div>
 
-        }
+            }
+        </div>
     </div>
 </div>
 

@@ -53,21 +53,24 @@
                 @using (Ajax.BeginForm("Guardar", "Usuario", new { }, new AjaxOptions()
                 {
                     HttpMethod = "POST",
-                    OnSuccess = "Refresh"
+                    OnSuccess = "Refresh",
+                    InsertionMode = InsertionMode.Replace,
+                    UpdateTargetId = "divErrores"
 
                 }, new { @id = "frmCreate" }))
                 {
                     @Html.Hidden("operacion")
                     @Html.Hidden("persona")
+
                     <div class="form-group">
                         @Html.Label("Nombre")
                         @Html.TextBox("NOMBREUSUARIO", "", new { @class = "form-control" })
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" id="divPass">
                         @Html.Label("Password")
                         @Html.Password("CONTRA", "", new { @class = "form-control" })
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" id="divPersona">
                         @Html.Label("Persona")
                         @Html.DropDownList("IID", listaPersonas, new { @class = "form-control" })
                     </div>
@@ -78,9 +81,33 @@
 
                 }
             </div>
+            <div id="divErrores"></div>
             <div class="modal-footer">
                 <button type="button" id="btnClose" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
                 <button class="btn btn-primary" onclick="create()">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title text-primary" id="deleteModalLabel">Usuarios</h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <span>Quires borrar el registro seleccionado?</span>
+            </div>
+            @Html.Hidden("idEliminar")
+            <div class="modal-footer">
+                <button type="button" id="btnClose2" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="enviar()">Aceptar</button>
             </div>
         </div>
     </div>
@@ -97,19 +124,59 @@
     }
 
     function agregar() {
-        document.getElementById("operacion").value = 1;
+        limpiar();
+
+        document.getElementById("operacion").value = "-1";
+        document.getElementById("divPass").style.display = "block";
+        document.getElementById("divPersona").style.display = "block";
     }
 
     function Refresh(resp) {
-        console.log(resp);
-        if (resp != 0) {
+        if (resp == "1") {
             document.getElementById("btnClose").click();
             $("#frmBusquedas").trigger("submit");
         }
     }
 
+    function limpiar() {
+        document.getElementById("operacion").value = "";
+        document.getElementById("persona").value = "";
+        document.getElementById("NOMBREUSUARIO").value = "";
+        document.getElementById("IID").value = "";
+        document.getElementById("IIDROL").value = "";
+        document.getElementById("divErrores").innerHTML = "";
+    }
+
     function create() {
         $("#frmCreate").trigger("submit");
+    }
+
+    function edit(id) {
+        limpiar();
+        document.getElementById("operacion").value = id;
+        document.getElementById("divPass").style.display = "none";
+        document.getElementById("divPersona").style.display = "none";
+
+        $.get("/Usuario/Edit/?id=" + id, (resp) => {
+            document.getElementById("NOMBREUSUARIO").value = resp.NOMBREUSUARIO;
+            document.getElementById("IID").value = resp.IID;
+            document.getElementById("IIDROL").value = resp.IIDROL;
+            document.getElementById("CONTRA").value = "X";
+        });
+    }
+
+    function eliminar(id) {
+        document.getElementById("idEliminar").value = id;
+    }
+
+    function enviar() {
+        let id = document.getElementById("idEliminar").value;
+        $.post("/Usuario/Delete", { idEliminar: id }, (resp) => {
+            if (resp == "1") {
+                document.getElementById("btnClose2").click();
+                $("#frmBusquedas").trigger("submit");
+            }
+        });
     }
 </script>
 

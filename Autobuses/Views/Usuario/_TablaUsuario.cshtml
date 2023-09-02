@@ -41,8 +41,8 @@
                 @Html.DisplayFor(modelItem => item.Rol)
             </td>
             <td>
-                @Html.ActionLink(" ", "Edit", "Usuario", new { id = item.IIDUSUARIO }, new { @class = "glyphicon glyphicon-edit" })
-                <button class="glyphicon glyphicon-trash text-danger" data-toggle="modal" data-target="#exampleModal" onclick="agregar(@item.IIDUSUARIO)"></button>
+                <button class="glyphicon glyphicon-edit text-primary" data-toggle="modal" data-target="#exampleModal" onclick="edit(@item.IIDUSUARIO)"></button>
+                <button class="glyphicon glyphicon-trash text-danger" data-toggle="modal" data-target="#deleteModal" onclick="eliminar(@item.IIDUSUARIO)"></button>
             </td>
         </tr>
         }

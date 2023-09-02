@@ -1,4 +1,5 @@
 ﻿using Autobuses.Clases;
+using Autobuses.Filters;
 using Autobuses.Models;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,7 @@ using System.Web.Mvc;
 
 namespace Autobuses.Controllers
 {
+    [Acceso]
     public class BusController : Controller
     {
         // GET: Bus
@@ -48,10 +50,10 @@ namespace Autobuses.Controllers
                                   NUMEROCOLUMNAS = (int)bus.NUMEROCOLUMNAS,
                                   DESCRIPCION = bus.DESCRIPCION,
                                   OBSERVACION = bus.OBSERVACION,
-                                  IIDSUCURSAL = (int) bus.IIDSUCURSAL,
-                                  IIDMARCA = (int) bus.IIDMARCA,
-                                  IIDMODELO = (int) bus.IIDMODELO,
-                                  IIDTIPOBUS = (int) bus.IIDTIPOBUS
+                                  IIDSUCURSAL = (int)bus.IIDSUCURSAL,
+                                  IIDMARCA = (int)bus.IIDMARCA,
+                                  IIDMODELO = (int)bus.IIDMODELO,
+                                  IIDTIPOBUS = (int)bus.IIDTIPOBUS
 
                               }).ToListAsync();
 

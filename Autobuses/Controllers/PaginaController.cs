@@ -1,4 +1,5 @@
 ﻿using Autobuses.Clases;
+using Autobuses.Filters;
 using Autobuses.Models;
 using System;
 using System.Collections.Generic;
@@ -7,9 +8,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using static iTextSharp.text.pdf.AcroFields;
 
 namespace Autobuses.Controllers
 {
+    [Acceso]
     public class PaginaController : Controller
     {
         // GET: Pagina
@@ -99,25 +102,48 @@ namespace Autobuses.Controllers
                     {
                         if (operacion == -1)
                         {
-                            pagina.MENSAJE = oPaginaCLS.MENSAJE;
-                            pagina.ACCION = oPaginaCLS.ACCION;
-                            pagina.CONTROLADOR = oPaginaCLS.CONTROLADOR;
-                            pagina.BHABILITADO = 1;
+                            var existe = await bd.Pagina.AnyAsync(x => x.MENSAJE == oPaginaCLS.MENSAJE);
 
-                            bd.Pagina.Add(pagina);
-                            r = await bd.SaveChangesAsync();
-                            if (r == 0) resp = "";
-                            else resp = r.ToString();
+                            if (existe)
+                            {
+                                resp += "<ul class = 'list-group'>";
+                                resp += "<li class = 'list-group-item text-danger'>Esa Página ya existe en la BD..</li>";
+                                resp += "</ul>";
+                            }
+                            else
+                            {
+                                pagina.MENSAJE = oPaginaCLS.MENSAJE;
+                                pagina.ACCION = oPaginaCLS.ACCION;
+                                pagina.CONTROLADOR = oPaginaCLS.CONTROLADOR;
+                                pagina.BHABILITADO = 1;
+
+                                bd.Pagina.Add(pagina);
+                                r = await bd.SaveChangesAsync();
+                                if (r == 0) resp = "";
+                                else resp = r.ToString();
+                            }
+
                         }
                         else
                         {
-                            pagina = await bd.Pagina.FirstOrDefaultAsync(x => x.IIDPAGINA == operacion);
-                            pagina.MENSAJE = oPaginaCLS.MENSAJE;
-                            pagina.ACCION = oPaginaCLS.ACCION;
-                            pagina.CONTROLADOR = oPaginaCLS.CONTROLADOR;
+                            var existe = await bd.Pagina.AnyAsync(x => x.MENSAJE == oPaginaCLS.MENSAJE && x.IIDPAGINA != operacion);
 
-                            r = await bd.SaveChangesAsync();
-                            resp = r.ToString();
+                            if (existe)
+                            {
+                                resp += "<ul class = 'list-group'>";
+                                resp += "<li class = 'list-group-item text-danger'>Esa Página ya existe en la BD..</li>";
+                                resp += "</ul>";
+                            }
+                            else
+                            {
+                                pagina = await bd.Pagina.FirstOrDefaultAsync(x => x.IIDPAGINA == operacion);
+                                pagina.MENSAJE = oPaginaCLS.MENSAJE;
+                                pagina.ACCION = oPaginaCLS.ACCION;
+                                pagina.CONTROLADOR = oPaginaCLS.CONTROLADOR;
+
+                                r = await bd.SaveChangesAsync();
+                                resp = r.ToString();
+                            }
                         }
                     }
                 }

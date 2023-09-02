@@ -1,15 +1,24 @@
 ﻿using Autobuses.Clases;
+using Autobuses.Filters;
 using Autobuses.Models;
+using iTextSharp.text;
+using iTextSharp.text.pdf;
+using OfficeOpenXml;
+using OfficeOpenXml.Style;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.UI.WebControls;
 
 namespace Autobuses.Controllers
 {
+    [Acceso]
     public class MarcaController : Controller
     {
         public async Task<ActionResult> Index(MarcaCLS oMarcaCLS)
@@ -29,6 +38,8 @@ namespace Autobuses.Controllers
                                       DESCRIPCION = marca.DESCRIPCION
 
                                   }).ToListAsync();
+
+                    Session["listaMarcas"] = list;
                 }
                 else
                 {
@@ -41,6 +52,8 @@ namespace Autobuses.Controllers
                                       DESCRIPCION = marca.DESCRIPCION
 
                                   }).ToListAsync();
+
+                    Session["listaMarcas"] = list;
                 }
 
             }
@@ -153,6 +166,106 @@ namespace Autobuses.Controllers
             }
 
             return RedirectToAction("Index");
+        }
+
+        public FileResult Pdf()
+        {
+            Document doc = new Document();
+            byte[] buffer;
+
+            using (var ms = new MemoryStream())
+            {
+                PdfWriter.GetInstance(doc, ms);
+                doc.Open();
+
+                Paragraph title = new Paragraph("Marcas");
+                title.Alignment = Element.ALIGN_CENTER;
+                doc.Add(title);
+
+                Paragraph espacio = new Paragraph(" ");
+                doc.Add(espacio);
+
+                PdfPTable table = new PdfPTable(3);
+                float[] values = new float[3] { 30, 40, 80 };
+                table.SetWidths(values);
+
+                PdfPCell cell1 = new PdfPCell(new Paragraph("ID"));
+                cell1.BackgroundColor = new BaseColor(130, 130, 130);
+                cell1.HorizontalAlignment = PdfPCell.ALIGN_CENTER;
+                table.AddCell(cell1);
+
+                PdfPCell cell2 = new PdfPCell(new Paragraph("NOMBRE"));
+                cell2.BackgroundColor = new BaseColor(130, 130, 130);
+                cell2.HorizontalAlignment = PdfPCell.ALIGN_CENTER;
+                table.AddCell(cell2);
+
+                PdfPCell cell3 = new PdfPCell(new Paragraph("DESCRIPCION"));
+                cell3.BackgroundColor = new BaseColor(130, 130, 130);
+                cell3.HorizontalAlignment = PdfPCell.ALIGN_CENTER;
+                table.AddCell(cell3);
+
+                List<MarcaCLS> list = (List<MarcaCLS>)Session["listaMarcas"];
+
+                foreach (MarcaCLS item in list)
+                {
+                    table.AddCell(item.IIDMARCA.ToString());
+                    table.AddCell(item.NOMBRE);
+                    table.AddCell(item.DESCRIPCION);
+                }
+
+                doc.Add(table);
+
+                doc.Close();
+
+                buffer = ms.ToArray();
+            }
+
+            return File(buffer, "application/pdf");
+        }
+
+        public FileResult Excel()
+        {
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            byte[] buffer;
+
+            using (MemoryStream ms = new MemoryStream())
+            {
+                ExcelPackage ep = new ExcelPackage();
+
+                ep.Workbook.Worksheets.Add("Hoja1");
+
+                ExcelWorksheet ews = ep.Workbook.Worksheets[0];
+
+                ews.Cells[1, 1].Value = "ID";
+                ews.Cells[1, 2].Value = "NOMBRE";
+                ews.Cells[1, 3].Value = "DESCRIPCION";
+
+                ews.Column(1).Width = 20;
+                ews.Column(2).Width = 40;
+                ews.Column(3).Width = 180;
+
+                using (var range = ews.Cells[1, 1, 1, 3])
+                {
+                    range.Style.Fill.PatternType = ExcelFillStyle.Solid;
+                    range.Style.Font.Color.SetColor(Color.White);
+                    range.Style.Fill.BackgroundColor.SetColor(Color.DarkGray);
+                }
+
+                List<MarcaCLS> list = (List<MarcaCLS>)Session["listaMarcas"];
+
+                for (int i = 0; i < list.Count; i++)
+                {
+                    ews.Cells[i + 2, 1].Value = list[i].IIDMARCA;
+                    ews.Cells[i + 2, 2].Value = list[i].NOMBRE;
+                    ews.Cells[i + 2, 3].Value = list[i].DESCRIPCION;
+                }
+
+                ep.SaveAs(ms);
+
+                buffer = ms.ToArray();
+            }
+
+            return File(buffer, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         }
     }
 }

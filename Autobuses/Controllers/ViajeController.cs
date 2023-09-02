@@ -1,4 +1,5 @@
 ﻿using Autobuses.Clases;
+using Autobuses.Filters;
 using Autobuses.Models;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,7 @@ using System.Web.Mvc;
 
 namespace Autobuses.Controllers
 {
+    [Acceso]
     public class ViajeController : Controller
     {
         // GET: Viaje

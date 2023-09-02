@@ -1,4 +1,5 @@
 ﻿using Autobuses.Clases;
+using Autobuses.Filters;
 using Autobuses.Models;
 using System;
 using System.Collections.Generic;
@@ -7,9 +8,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using static iTextSharp.text.pdf.AcroFields;
 
 namespace Autobuses.Controllers
 {
+    [Acceso]
     public class RolController : Controller
     {
         // GET: Rol
@@ -93,25 +96,47 @@ namespace Autobuses.Controllers
                     {
                         if (operacion == -1)
                         {
-                            Rol rol = new Rol();
-                            rol.NOMBRE = oRolCLS.NOMBRE;
-                            rol.DESCRIPCION = oRolCLS.DESCRIPCION;
-                            rol.BHABILITADO = 1;
+                            var existe = await bd.Rol.AnyAsync(x => x.NOMBRE == oRolCLS.NOMBRE);
 
-                            bd.Rol.Add(rol);
-                            r = await bd.SaveChangesAsync();
-                            if (r == 0) resp = "";
-                            else resp = r.ToString();
+                            if (existe)
+                            {
+                                resp += "<ul class='list-group'>";
+                                resp += "<li class='list-group-item text-danger'>Ese Rol ya existe en la BD..</li>";
+                                resp += "</ul>";
+                            }
+                            else
+                            {
+                                Rol rol = new Rol();
+                                rol.NOMBRE = oRolCLS.NOMBRE;
+                                rol.DESCRIPCION = oRolCLS.DESCRIPCION;
+                                rol.BHABILITADO = 1;
+
+                                bd.Rol.Add(rol);
+                                r = await bd.SaveChangesAsync();
+                                if (r == 0) resp = "";
+                                else resp = r.ToString();
+                            }
+
                         }
                         else
                         {
-                            Rol rol = await bd.Rol.FirstOrDefaultAsync(x => x.IIDROL == operacion);
-                            rol.NOMBRE = oRolCLS.NOMBRE;
-                            rol.DESCRIPCION = oRolCLS.DESCRIPCION;
+                            var existe = await bd.Rol.AnyAsync(x => x.NOMBRE == oRolCLS.NOMBRE && x.IIDROL != operacion);
 
-                            r = await bd.SaveChangesAsync();
-                            resp = r.ToString();
+                            if (existe)
+                            {
+                                resp += "<ul class='list-group'>";
+                                resp += "<li class='list-group-item text-danger'>Ese Rol ya existe en la BD..</li>";
+                                resp += "</ul>";
+                            }
+                            else
+                            {
+                                Rol rol = await bd.Rol.FirstOrDefaultAsync(x => x.IIDROL == operacion);
+                                rol.NOMBRE = oRolCLS.NOMBRE;
+                                rol.DESCRIPCION = oRolCLS.DESCRIPCION;
 
+                                r = await bd.SaveChangesAsync();
+                                resp = r.ToString();
+                            }
                         }
                     }
                 }

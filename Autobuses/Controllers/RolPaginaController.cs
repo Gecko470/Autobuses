@@ -1,4 +1,5 @@
 ﻿using Autobuses.Clases;
+using Autobuses.Filters;
 using Autobuses.Models;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,7 @@ using System.Web.Mvc;
 
 namespace Autobuses.Controllers
 {
+    [Acceso]
     public class RolPaginaController : Controller
     {
         // GET: RolPagina
@@ -41,7 +43,7 @@ namespace Autobuses.Controllers
 
         public async Task<ActionResult> Filtro(int? idRol)
         {
-            if(idRol == null) idRol = 0;
+            if (idRol == null) idRol = 0;
 
             List<RolPaginaCLS> list = new List<RolPaginaCLS>();
 
@@ -112,25 +114,47 @@ namespace Autobuses.Controllers
 
                     using (var bd = new BDPasajeEntities())
                     {
+
                         if (operacion == -1)
                         {
-                            rolPagina.IIDROL = oRolPaginaCLS.IIDROL;
-                            rolPagina.IIDPAGINA = oRolPaginaCLS.IIDPAGINA;
-                            rolPagina.BHABILITADO = 1;
+                            var existe = await bd.RolPagina.AnyAsync(x => x.IIDPAGINA == oRolPaginaCLS.IIDPAGINA && x.IIDROL == oRolPaginaCLS.IIDROL);
+                            if (existe)
+                            {
+                                resp += "<ul class = 'list-group'>";
+                                resp += "<li class = 'list-group-item text-danger'>Ya existe en la BD ese Rol asignado a esa Página..</li>";
+                                resp += "</ul>";
+                            }
+                            else
+                            {
+                                rolPagina.IIDROL = oRolPaginaCLS.IIDROL;
+                                rolPagina.IIDPAGINA = oRolPaginaCLS.IIDPAGINA;
+                                rolPagina.BHABILITADO = 1;
 
-                            bd.RolPagina.Add(rolPagina);
-                            r = await bd.SaveChangesAsync();
-                            if (r == 0) resp = "";
-                            else resp = r.ToString();
+                                bd.RolPagina.Add(rolPagina);
+                                r = await bd.SaveChangesAsync();
+                                if (r == 0) resp = "";
+                                else resp = r.ToString();
+                            }
+
                         }
                         else
                         {
-                            rolPagina = await bd.RolPagina.FirstOrDefaultAsync(x => x.IIDPAGINA == operacion);
-                            rolPagina.IIDROL = oRolPaginaCLS.IIDROL;
-                            rolPagina.IIDPAGINA = oRolPaginaCLS.IIDPAGINA;
+                            var existe = await bd.RolPagina.AnyAsync(x => x.IIDPAGINA == oRolPaginaCLS.IIDPAGINA && x.IIDROL == oRolPaginaCLS.IIDROL && x.IIDROLPAGINA != operacion);
+                            if (existe)
+                            {
+                                resp += "<ul class = 'list-group'>";
+                                resp += "<li class = 'list-group-item text-danger'>Ya existe en la BD ese Rol asignado a esa Página..</li>";
+                                resp += "</ul>";
+                            }
+                            else
+                            {
+                                rolPagina = await bd.RolPagina.FirstOrDefaultAsync(x => x.IIDPAGINA == operacion);
+                                rolPagina.IIDROL = oRolPaginaCLS.IIDROL;
+                                rolPagina.IIDPAGINA = oRolPaginaCLS.IIDPAGINA;
 
-                            r = await bd.SaveChangesAsync();
-                            resp = r.ToString();    
+                                r = await bd.SaveChangesAsync();
+                                resp = r.ToString();
+                            }
                         }
                     }
                 }
@@ -143,16 +167,16 @@ namespace Autobuses.Controllers
             return resp;
         }
 
-        public async Task<JsonResult>Edit(int id)
+        public async Task<JsonResult> Edit(int id)
         {
             RolPaginaCLS oRolPaginaCLS = new RolPaginaCLS();
 
-            using(var bd = new BDPasajeEntities())
+            using (var bd = new BDPasajeEntities())
             {
                 RolPagina rolPagina = await bd.RolPagina.FirstOrDefaultAsync(x => x.IIDROLPAGINA == id);
 
-                oRolPaginaCLS.IIDPAGINA = (int) rolPagina.IIDPAGINA;
-                oRolPaginaCLS.IIDROL = (int) rolPagina.IIDROL;
+                oRolPaginaCLS.IIDPAGINA = (int)rolPagina.IIDPAGINA;
+                oRolPaginaCLS.IIDROL = (int)rolPagina.IIDROL;
             }
 
             return Json(oRolPaginaCLS, JsonRequestBehavior.AllowGet);
