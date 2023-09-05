@@ -1,0 +1,46 @@
+﻿@using Autobuses.Clases
+@model IEnumerable<ReservaCLS>
+@{
+    ViewBag.Title = "Mis Reservas";
+}
+
+<h2>Mis reservas</h2>
+<hr />
+
+@using (Ajax.BeginForm("Filtrar", new { }, new AjaxOptions()
+{
+    HttpMethod = "POST",
+    InsertionMode = InsertionMode.Replace,
+    UpdateTargetId = "divMisReservas"
+
+}, new { @id = "frmFiltrar" }))
+{
+    <p style="text-align: right;"><button class="btn btn-primary" onclick="Guardar()">Guardar</button></p>
+    <div id="divMisReservas">
+        @Html.Partial("_TablaMisReservas", Model)
+    </div>
+}
+
+
+<script>
+    function Eliminar(idViaje) {
+        if (confirm("Quieres cancelar la reserva? ..")) {
+
+            $.get("/Reserva/RemoverCookies/?id=" + idViaje, (resp) => {
+                if (resp == "1") {
+                    $("#frmFiltrar").trigger("submit");
+                }
+            });
+        }
+    }
+
+    function Guardar() {
+        let total = document.getElementById("cellTotal").innerHTML;
+
+        $.get("/MisReservas/Guardar/?total=" + total, (resp) => {
+            if (resp == "1") {
+                $("#frmFiltrar").trigger("submit");
+            }
+        });
+    }
+</script>

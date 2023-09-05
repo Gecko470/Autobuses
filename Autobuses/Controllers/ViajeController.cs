@@ -206,7 +206,7 @@ namespace Autobuses.Controllers
                 oViajeCLS.IIDLUGARDESTINO = (int)viaje.IIDLUGARDESTINO;
                 oViajeCLS.IIDBUS = (int)viaje.IIDBUS;
                 oViajeCLS.PRECIO = (int)viaje.PRECIO;
-                oViajeCLS.FechaViajeString = ((DateTime)viaje.FECHAVIAJE).ToString("yyyy-MM-dd");
+                oViajeCLS.FechaViajeString = viaje.FECHAVIAJE != null ? ((DateTime)viaje.FECHAVIAJE).ToString("yyyy-MM-ddTHH:mm") : "";
                 oViajeCLS.NUMEROASIENTOSDISPONIBLES = (int)viaje.NUMEROASIENTOSDISPONIBLES;
                 oViajeCLS.nombrefoto = viaje.nombrefoto;
                 oViajeCLS.extension = Path.GetExtension(viaje.nombrefoto);

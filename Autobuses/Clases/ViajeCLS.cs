@@ -34,7 +34,6 @@ namespace Autobuses.Clases
        
         public int BHABILITADO { get; set; }
         public byte[] FOTO { get; set; }
-        [Required]
         [Display(Name = "Nombre Foto")]
         public string nombrefoto { get; set; }
 

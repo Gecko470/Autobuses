@@ -1,0 +1,36 @@
+﻿@model IEnumerable<Autobuses.Clases.ReservaRealizadaCLS>
+
+@{
+    ViewBag.Title = "Reservas Realizadas";
+}
+
+<h2>Reservas Realizadas</h2>
+<hr />
+<table class="table table-striped">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.iidVenta)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.fechaVenta)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.total)
+        </th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.iidVenta)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.fechaVenta)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.total)
+        </td>
+    </tr>
+}
+
+</table>

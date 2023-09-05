@@ -1,0 +1,43 @@
+﻿@using Autobuses.Clases
+@model IEnumerable<ReservaCLS>
+@{
+    decimal total = 0;
+}
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Lugar Origen</th>
+            <th>Lugar Destino</th>
+            <th>Fecha</th>
+            <th>Cantidad</th>
+            <th>Precio</th>
+            <th>Subtotal</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            string fecha = string.Format("{0:dd-MM-yyyy HH:mm}", item.fechaViaje);
+            decimal subtotal = item.cantidad * item.precio;
+            total += subtotal;
+            <tr>
+                <td>@item.iidViaje</td>
+                <td>@item.lugarOrigen</td>
+                <td>@item.lugarDestino</td>
+                <td>@fecha</td>
+                <td>@item.cantidad</td>
+                <td>@item.precio €</td>
+                <td>@subtotal €</td>
+                <td><button class="glyphicon glyphicon-trash text-danger" onclick="Eliminar(@item.iidViaje)"></button></td>
+            </tr>
+        }
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="6" style="font-weight: bold; text-align: right; font-size: 16px;">Total</td>
+            <td style="font-weight: bold; font-size: 16px;" id="cellTotal">@total</td>
+        </tr>
+    </tfoot>
+</table>
